@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.api.v1 import api_v1_router
 from app.db.session import engine, SessionLocal
 from app.db.base import Base
-from app.db.seed import seed_database_data
+from app.db.seed import seed_database
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
             count = db.query(Equipment).count()
             if count == 0:
                 logger.info("Database is empty. Auto-seeding Caterpillar demo data...")
-                seed_database_data(db)
+                seed_database(db)
                 logger.info("Auto-seeding complete.")
             else:
                 logger.info(f"Database already contains {count} equipment records.")
