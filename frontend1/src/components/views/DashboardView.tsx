@@ -72,12 +72,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     setLoading(true);
     setError(null);
     try {
-      await Promise.all([
-        generateAlerts(),
-        generateForecasts(7),
-        generateRecommendations()
-      ]);
-
+      // Blazing fast direct parallel fetch of pre-calculated state (prevents server choke on free tiers)
       const [sumData, execData, utilData, siteData, alertsData, sfData, matrixData, recData] = await Promise.all([
         fetchDashboardSummary(),
         fetchExecutiveSummary(),
@@ -97,6 +92,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       setSiteForecasts(sfData);
       setForecastMatrix(matrixData);
       setRecommendations(recData);
+
+      // If database is brand new and has no forecasts yet, generate them once
+      if (sfData.length === 0) {
+        generateForecasts(7).then(() => {
+          fetchSiteForecastSummaries().then(setSiteForecasts);
+          fetchForecastMatrix().then(setForecastMatrix);
+        });
+      }
     } catch (err: any) {
       setError(err?.message || 'Failed to load customer rental operations data.');
     } finally {
@@ -141,7 +144,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div>
           <h4 className="text-base font-black text-slate-950">Aggregating Machine Telematics</h4>
           <p className="text-xs text-slate-600 font-semibold mt-1">
-            Training Random Forest forecasting model &amp; evaluating cross-site recommendations...
+            Loading live fleet utilization, contracts, and predictive intelligence...
           </p>
         </div>
       </div>
