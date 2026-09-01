@@ -1,10 +1,13 @@
 import axios from 'axios';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Strip any trailing slashes to prevent malformed URLs like https://api.com//api
+const rawBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/+$/, '');
+
+export const API_BASE_URL = rawBase;
 
 export const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
+  baseURL: `${rawBase}/api`,
+  timeout: 30000, // 30-second timeout to handle cloud free-tier cold starts
   headers: {
     'Content-Type': 'application/json'
   }
