@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+import { apiClient } from './client';
 
 export interface HealthResponse {
   status: string;
@@ -22,15 +20,11 @@ export interface DatabaseHealthResponse {
 }
 
 export const fetchAppHealth = async (): Promise<HealthResponse> => {
-  const response = await axios.get<HealthResponse>(`${API_BASE_URL}/api/health`, {
-    timeout: 5000
-  });
+  const response = await apiClient.get<HealthResponse>('/health');
   return response.data;
 };
 
 export const fetchDatabaseHealth = async (): Promise<DatabaseHealthResponse> => {
-  const response = await axios.get<DatabaseHealthResponse>(`${API_BASE_URL}/api/health/db`, {
-    timeout: 5000
-  });
+  const response = await apiClient.get<DatabaseHealthResponse>('/health/db');
   return response.data;
 };

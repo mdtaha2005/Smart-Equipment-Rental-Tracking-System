@@ -7,7 +7,7 @@ export const API_BASE_URL = rawBase;
 
 export const apiClient = axios.create({
   baseURL: `${rawBase}/api`,
-  timeout: 30000, // 30-second timeout to handle cloud free-tier cold starts
+  timeout: 60000, // 60-second timeout to gracefully handle cloud free-tier cold starts
   headers: {
     'Content-Type': 'application/json'
   }
